@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace SimpleScanning
@@ -21,10 +23,17 @@ namespace SimpleScanning
         {
             Console.SetWindowSize(150, 45);
             Console.Title = "SIMPLE SCANNING! press <ctrl+c> to exit at any time";
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Black;
+            EditColor();
             Console.Clear();
         }
+
+        public static void EditColor() // For Terminal Default
+        {
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+
+
 
         public static void OnLoad()
         {
@@ -39,42 +48,48 @@ namespace SimpleScanning
         {
             bool programRun = true;
             ConsoleKey choice;
-            LinkedList<string> taskItems =
-                new LinkedList<string>();
-            int currentSelection = 0;
+            ArrayList taskItems =
+                new ArrayList();
+            int selected = 0;
             int Page = 1;
+            PntFst(taskItems, 0);
+
             do
             {
                 Console.Clear();
                 OnLoad();
                 ShowMenu();
                 int n = taskItems.Count;
-                PntFst(taskItems);
+                PntFst(taskItems, selected);
+                
                 
                 choice = Console.ReadKey(true).Key;
                 switch (choice)
                 {
                     case ConsoleKey.A: // Add
                         CenterText("Enter new task: ");
+                        Console.CursorVisible = true;
                         var input = Console.ReadLine();
-                        taskItems.AddLast(input);
+                        taskItems.Add(input);
                         continue;
                     case ConsoleKey.R: // Reenter
-                        taskItems.AddLast(selected);
+                        taskItems.Add(taskItems[selected]);
                         continue;
                     case ConsoleKey.DownArrow:
-                        if (currentSelection >= 0 || currentSelection < 20)
+                        if (selected >= 0 && selected <= taskItems.Count || 
+                            selected < 20 && selected <= taskItems.Count)
                         {
-                            currentSelection++;
+                            selected++;
                         }
-                        if (currentSelection == 20)
+                        if (selected == 20)
                         {
                             Page++;
-                            currentSelection++;
+                            
+                            selected++;
                         }
-                        if (currentSelection )
+                        if (selected == taskItems.Count)
                         {
-
+                            
                         }
                         continue;
                     default:
@@ -109,15 +124,89 @@ namespace SimpleScanning
             return text;
         }
 
-        public static void PntFst(LinkedList<string> first)
+        public static void PntFst(ArrayList taskList, int selected)
         {
-            foreach (string s in first)
+            if (taskList.Count == 0)
             {
-                CenterText(s);
+                CenterText("No Tasks");
             }
-            CenterText(" ");
+            else
+            {
+                string index = taskList[selected].ToString();
+                string text = taskList[selected].ToString(); ;
+                int size = text.Length + 4;
+
+                if (selected == 0)
+                {
+                    SelectColor(index, size);
+                    if (taskList.Count > 1)
+                    {
+                        for (int i = selected + 1; i < taskList.Count; i++)
+                        {
+                            CenterText(taskList[i].ToString());
+                        }
+                    }
+                
+                }
+                else if(selected > 0)
+                {
+                    
+                    for (int i = 0; i < selected; i++)
+                    {
+                        CenterText(taskList[i].ToString());
+                    }
+                    SelectColor(index, size);
+                    for (int i = selected + 1; i < taskList.Count; i++)
+                    {
+                        CenterText(taskList[i].ToString());
+                    }
+
+                }
+                CenterText(" ");
+            }
         }
 
+        public static void SelectColor(string text, int size) // For Selected Text
+        {
+            // Sets variables, saves cursor location
+            text += "  ";
+            string spaces = "  ";
+            int x = Console.CursorLeft;
+            int y = Console.CursorTop;
+
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            // Writes selected text with different colors
+            Console.WriteLine(String.Format("{0,"
+                + ((Console.WindowWidth / 2)
+                + (text.Length / 2)) + "}", text));
+
+            // Cleans up color spill at beginning of above text
+            Console.SetCursorPosition(0, y);
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.WriteLine(String.Format("{0,"
+                + (((Console.WindowWidth - size) / 2)
+                + (spaces.Length / 3)) + "}", spaces));
+
+            // Reset Cursor Position 1 line down
+            Console.SetCursorPosition(x, y + 1);
+            EditColor();
+        }
+
+        public static void Selected(ArrayList taskList, int selected)
+        {
+            string text = taskList[selected].ToString();
+            int length = text.Length + 4;
+            Console.CursorVisible = true;
+        }
+
+
+       // public static int HighlightLength(LinkedList<string> taskList)
+       // {
+
+        //    var temp = taskList.ElementAt(n);
+       // }
         // Move Cursor
         //Index -> color
         //    select = 0
@@ -128,6 +217,8 @@ namespace SimpleScanning
         // Count += 1;
         // Count %= list.Count;
 
-
+        //for (int i = firstOfPage(currentPage);
+        //  (i C Is.Count)&&(i<FirstOfPage(currentPage + 1));
+        //  ++i
     }
 }
