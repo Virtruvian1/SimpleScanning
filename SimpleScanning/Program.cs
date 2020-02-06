@@ -33,8 +33,6 @@ namespace SimpleScanning
             Console.ForegroundColor = ConsoleColor.Black;
         }
 
-
-
         public static void OnLoad()
         {
             string welcome1 = "Welcome to Simple Scanning!\r\n";
@@ -43,8 +41,24 @@ namespace SimpleScanning
             CenterText(welcome2);
             Console.CursorVisible = false;
         }
+        public static void ShowMenu()
+        {
 
-        public static void MainMenu()
+            var text1 = "============================================================";
+            var text2 = "DownArrow = Next : " +
+                        "S = Skip : " +
+                        "A = Add : " +
+                        "R = Renter : ";
+            int x = Console.CursorLeft;
+            int y = Console.CursorTop;
+            Console.CursorTop = Console.WindowTop + Console.WindowHeight - 5;
+            CenterText(text1);
+            CenterText(text2);
+            // Restore previous position
+            Console.SetCursorPosition(x, y);
+        }
+
+        public static void MainMenu() // Currently Working On
         {
             bool programRun = true;
             ConsoleKey choice;
@@ -52,7 +66,7 @@ namespace SimpleScanning
                 new ArrayList();
             int selected = 0;
             int Page = 1;
-            PntFst(taskItems, 0);
+            var (text, size) = ObjStr(taskItems, selected);
 
             do
             {
@@ -61,8 +75,8 @@ namespace SimpleScanning
                 ShowMenu();
                 int n = taskItems.Count;
                 PntFst(taskItems, selected);
-                
-                
+                (text, size) = ObjStr(taskItems, selected);
+
                 choice = Console.ReadKey(true).Key;
                 switch (choice)
                 {
@@ -71,6 +85,10 @@ namespace SimpleScanning
                         Console.CursorVisible = true;
                         var input = Console.ReadLine();
                         taskItems.Add(input);
+                        continue;
+                    case ConsoleKey.S: // Skip
+                        // chagne color to red
+                        SelectColor(text, size, 2);
                         continue;
                     case ConsoleKey.R: // Reenter
                         taskItems.Add(taskItems[selected]);
@@ -99,22 +117,6 @@ namespace SimpleScanning
             } while (programRun);
         }
 
-        public static void ShowMenu()
-        {
-
-            var text1 = "============================================================";
-            var text2 = "DownArrow = Next : " +
-                        "S = Skip : " +
-                        "A = Add : " +
-                        "R = Renter : ";
-            int x = Console.CursorLeft;
-            int y = Console.CursorTop;
-            Console.CursorTop = Console.WindowTop + Console.WindowHeight - 5;
-            CenterText(text1);
-            CenterText(text2);
-            // Restore previous position
-            Console.SetCursorPosition(x, y);
-        }
 
         public static string CenterText(string text)
         {
@@ -124,26 +126,24 @@ namespace SimpleScanning
             return text;
         }
 
-        public static void PntFst(ArrayList taskList, int selected)
+        public static void PntFst(ArrayList taskItems, int selected)
         {
-            if (taskList.Count == 0)
+            if (taskItems.Count == 0)
             {
                 CenterText("No Tasks");
             }
             else
             {
-                string index = taskList[selected].ToString();
-                string text = taskList[selected].ToString(); ;
-                int size = text.Length + 4;
+                var (text, size) = ObjStr(taskItems, selected);
 
                 if (selected == 0)
                 {
-                    SelectColor(index, size);
-                    if (taskList.Count > 1)
+                    SelectColor(text, size, 1);
+                    if (taskItems.Count > 1)
                     {
-                        for (int i = selected + 1; i < taskList.Count; i++)
+                        for (int i = selected + 1; i < taskItems.Count; i++)
                         {
-                            CenterText(taskList[i].ToString());
+                            CenterText(taskItems[i].ToString());
                         }
                     }
                 
@@ -153,12 +153,12 @@ namespace SimpleScanning
                     
                     for (int i = 0; i < selected; i++)
                     {
-                        CenterText(taskList[i].ToString());
+                        CenterText(taskItems[i].ToString());
                     }
-                    SelectColor(index, size);
-                    for (int i = selected + 1; i < taskList.Count; i++)
+                    SelectColor(text, size, 1);
+                    for (int i = selected + 1; i < taskItems.Count; i++)
                     {
-                        CenterText(taskList[i].ToString());
+                        CenterText(taskItems[i].ToString());
                     }
 
                 }
@@ -166,40 +166,44 @@ namespace SimpleScanning
             }
         }
 
-        public static void SelectColor(string text, int size) // For Selected Text
+        public static (string, int) ObjStr(ArrayList taskItems, int selected)
+        {
+            string text = taskItems[selected].ToString();
+            int size = text.Length + 4;
+            return (text, size);
+        }
+        public static void SelectColor(string text, int size, int ID) // For Selected Text
         {
             // Sets variables, saves cursor location
-            text += "  ";
-            string spaces = "  ";
             int x = Console.CursorLeft;
             int y = Console.CursorTop;
-
-            Console.BackgroundColor = ConsoleColor.Red;
+            
+            Console.BackgroundColor = ConsoleColor.Green;
             Console.ForegroundColor = ConsoleColor.White;
-
-            // Writes selected text with different colors
-            Console.WriteLine(String.Format("{0,"
-                + ((Console.WindowWidth / 2)
-                + (text.Length / 2)) + "}", text));
-
-            // Cleans up color spill at beginning of above text
-            Console.SetCursorPosition(0, y);
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.WriteLine(String.Format("{0,"
-                + (((Console.WindowWidth - size) / 2)
-                + (spaces.Length / 3)) + "}", spaces));
-
-            // Reset Cursor Position 1 line down
+            text += " ";
+            CenterText(text);
+            CleanUp(size);
             Console.SetCursorPosition(x, y + 1);
             EditColor();
         }
 
-        public static void Selected(ArrayList taskList, int selected)
+        public static void CleanUp(int size)
         {
-            string text = taskList[selected].ToString();
-            int length = text.Length + 4;
-            Console.CursorVisible = true;
+            int y = Console.CursorTop;
+            Console.SetCursorPosition(0, y);
+            string spaces = "  ";
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.WriteLine(String.Format("{0,"
+                + (((Console.WindowWidth - size) / 2)
+                + (spaces.Length / 3)) + "}", spaces));
         }
+
+        //public static void Selected(ArrayList taskList, int selected)
+        //{
+        //    string text = taskList[selected].ToString();
+       //     int length = text.Length + 4;
+       //     Console.CursorVisible = true;
+       // }
 
 
        // public static int HighlightLength(LinkedList<string> taskList)
