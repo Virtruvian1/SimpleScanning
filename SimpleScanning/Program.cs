@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-
+// Version 1.1
 namespace SimpleScanning
 {
     class Program
@@ -14,10 +14,10 @@ namespace SimpleScanning
         // ID 001
         static void Main(string[] args) 
         {
-            DefaultConsole(); 
-            OnLoad();
-            ShowMenu();
-            DisplayList();
+            DefaultConsole(); //-> 006
+            OnLoad(); //-> 002
+            ShowMenu(); //-> 009
+            DisplayList(); //-> 003
         }
 
         public static void OnLoad() // Menu On Load 
@@ -25,8 +25,8 @@ namespace SimpleScanning
         {
             string welcome1 = "Welcome to Simple Scanning!\r\n";
             string welcome2 = "Press any key to continue...\r\n";
-            CenterText(welcome1);
-            CenterText(welcome2);
+            CenterText(welcome1); //-> 010
+            CenterText(welcome2); //-> 010
             Console.CursorVisible = false;
             Console.Read();
             Console.Clear(); // Clears text after keyboard press
@@ -43,41 +43,41 @@ namespace SimpleScanning
             ArrayList taskItems = new ArrayList();
 
             do 
-        // ID 003.001
+            // ID 003.001
             {
                 Console.Clear(); // Clear Console on loop
-                ShowMenu(); // Bottom display of avalible key pressess
+                ShowMenu(); //-> 009
                 Console.SetCursorPosition(0, 4);
-                PrintList(taskItems, selectedIndex, pageNum); // Prints current list
+                PrintList(taskItems, selectedIndex, pageNum); //-> 004
                 ConsoleKey keyPress = Console.ReadKey(true).Key;
 
                 switch (keyPress) 
-        // ID 003.001.001
+                // ID 003.001.001
                 {
 
                     case ConsoleKey.A: // Add 
-        // ID 003.001.001.001
-                        KeyEvent(taskItems, 1, selectedIndex, pageNum);
+                    // ID 003.001.001.001
+                        KeyEvent(taskItems, 1, selectedIndex, pageNum); //-> 005.001
                         continue;
 
                     case ConsoleKey.F: // Finish 
-        // ID 003.001.001.002
-                        KeyEvent(taskItems, 2, selectedIndex, pageNum);
+                    // ID 003.001.001.002
+                        KeyEvent(taskItems, 2, selectedIndex, pageNum); //-> 005.002
                         continue;
 
                     case ConsoleKey.R: // Reenter
-        // ID 003.001.001.003
-                        KeyEvent(taskItems, 3, selectedIndex, pageNum);
+                    // ID 003.001.001.003
+                        KeyEvent(taskItems, 3, selectedIndex, pageNum); //-> 005.003
                         continue;
 
                     case ConsoleKey.S: // Skip 
-        // ID 003.001.001.004
-                        KeyEvent(taskItems, 4, selectedIndex, pageNum);
+                    // ID 003.001.001.004
+                        KeyEvent(taskItems, 4, selectedIndex, pageNum); //-> 005.004
                         continue;
 
                     case ConsoleKey.DownArrow: 
-        // ID 003.001.001.005
-                        turnPage = KeyEvent(taskItems, 5, selectedIndex, pageNum);
+                    // ID 003.001.001.005
+                        turnPage = KeyEvent(taskItems, 5, selectedIndex, pageNum); //-> 005.005
                         if (turnPage)
                         {
                             pageNum++;
@@ -85,7 +85,7 @@ namespace SimpleScanning
                         continue;
 
                     default: 
-        // ID 003.001.001.006
+                    // ID 003.001.001.006
                         break;
                 }
             } while (programRun);
@@ -97,75 +97,75 @@ namespace SimpleScanning
             int maxNum = pageNum * 20 - 1;
 
             if (taskItems.Count == 0) // If list is empty 
-        // ID 004.001
+            // ID 004.001
             {
-                CenterText("-- No Tasks --");
+                CenterText("-- No Tasks --"); //-> 010
             }
 
             else if (pageNum == 1) 
-        // ID 004.002
+            // ID 004.002
             {
                 var (indexOutput, indexLength) = ObjectToString(taskItems, selectedIndex);
 
                 if (selectedIndex == 0) // If selectedIndex is [0] 
-        // ID 004.002.001
+                // ID 004.002.001
                 {
                     SelectProcess(indexOutput, indexLength); // Chagnes color of selectedIndex
 
                     if (taskItems.Count > 1) // Prints all list items regularly after [i]
-        // ID 004.002.001.001
+                    // ID 004.002.001.001
                     {
 
                         for (int i = selectedIndex; i <= maxNum; i++) 
-        // ID 004.002.001.001.001
+                        // ID 004.002.001.001.001
                         {
                             var (internalOutput, _) = ObjectToString(taskItems, selectedIndex);
-                            CenterText(internalOutput);
+                            CenterText(internalOutput); //-> 010
                         }
                     }
                 }
 
                 else if(selectedIndex > 0) // If selectedIndex [i] > 0 
-        // ID 004.002.002
+                // ID 004.002.002
                 {
 
                     for (int i = 0; i < selectedIndex + 1; i++) // Prints all list items regularly before [i]
-        // ID 004.002.002.001
+                    // ID 004.002.002.001
                     {
-                        CenterText(taskItems[i].ToString());
+                        CenterText(taskItems[i].ToString()); //-> 010
                     }
-                    SelectProcess(indexOutput, indexLength);  // Chagnes color of selectedIndex
+                    SelectProcess(indexOutput, indexLength);  //-> 008
 
                     for (int i = selectedIndex + 1; i <= 20; i++) // Prints all list items regularly after [i] 
-        // ID 004.002.002.002
+                    // ID 004.002.002.002
                     {
-                        CenterText(taskItems[i].ToString());
+                        CenterText(taskItems[i].ToString()); //-> 010
                     }
                 }
 
                 else 
-        // ID 004.002.003
+                // ID 004.002.003
                 {
-                    CenterText(" ");
+                    CenterText(" "); //-> 010
                 }
             }
 
             else // Handles Page Flip 
-        // ID 004.003
+            // ID 004.003
             {
-                var (indexOutput, indexLength) = ObjectToString(taskItems, selectedIndex);
+                var (indexOutput, indexLength) = ObjectToString(taskItems, selectedIndex); //-> 011
 
                 for (int i = 0; i < selectedIndex; i++) // Prints all list items regularly before [i]
-        // ID 004.003.001
+                // ID 004.003.001
                 {
-                    CenterText(taskItems[i].ToString());
+                    CenterText(taskItems[i].ToString()); //-> 010
                 }
-                SelectProcess(indexOutput, indexLength);  // Chagnes color of selectedIndex
+                SelectProcess(indexOutput, indexLength);  //-> 008
 
                 for (int i = selectedIndex + 1; i < taskItems.Count; i++) // Prints all list items regularly after [i]
-        // ID 004.003.002
+                // ID 004.003.002
                 {
-                    CenterText(taskItems[i].ToString());
+                    CenterText(taskItems[i].ToString()); //-> 010
                 }
             }
         }
@@ -179,44 +179,44 @@ namespace SimpleScanning
             int i = maxNum - 20;
 
             if (ID == 1) // Add
-        // ID 005.001
+            // ID 005.001
             {
-                CenterText("Enter new task: ");
+                Console.Write("Enter new task: ");
                 Console.CursorVisible = true;
                 var input = Console.ReadLine();
                 taskItems.Add(input);
             }
 
             else if (ID == 2) // Finish
-        // ID 005.002
+            // ID 005.002
             {
 
             }
 
             else if (ID == 3) // ReEnter
-        // ID 005.003
+            // ID 005.003
             {
                 taskItems.Add(taskItems[selectedIndex]);
             }
 
             else if (ID == 4) // Skip
-        // ID 005.004
+            // ID 005.004
             {
                 //SelectColor(text, size, 2);
             }
 
             else if (ID == 5) // Down Arrow
-        // ID 005.005
+            // ID 005.005
             {
                 
                 if (selectedIndex >= 0 || selectedIndex <= 19)
-        // ID 005.005.001
+                // ID 005.005.001
                 {
                     selectedIndex++;
                 }
 
                 else if (pageCondition == 0) // If pageNum %20, print new page
-        // ID 005.005.002
+                // ID 005.005.002
                 {
                     selectedIndex++;
                     turnPage = true;
@@ -232,7 +232,7 @@ namespace SimpleScanning
         {
             Console.SetWindowSize(150, 45);
             Console.Title = "SIMPLE SCANNING! press <ctrl+c> to exit at any time";
-            EditColor(1);
+            EditColor(1); // -> 007
             Console.Clear();
         }
 
@@ -241,21 +241,21 @@ namespace SimpleScanning
         {
 
             if (ID == 1) // Default Color
-        // ID 007.001
+            // ID 007.001
             {
                 Console.BackgroundColor = ConsoleColor.Gray;
                 Console.ForegroundColor = ConsoleColor.Black;
             }
 
             else if (ID == 2) // Selected Color
-        // ID 007.002
+            // ID 007.002
             {
                 Console.BackgroundColor = ConsoleColor.Green;
                 Console.ForegroundColor = ConsoleColor.White;
             }
 
             else // Cleans Up Selected Color; pass indexLength as ID
-        // ID 007.003
+            // ID 007.003
             {
                 int y = Console.CursorTop;
                 Console.SetCursorPosition(0, y);
@@ -270,11 +270,11 @@ namespace SimpleScanning
         {
             int x = Console.CursorLeft;
             int y = Console.CursorTop;
-            EditColor(2);
-            CenterText(indexOutput += " ");
-            EditColor(indexLength);
+            EditColor(2); //-> 007
+            CenterText(indexOutput += " "); //-> 010
+            EditColor(indexLength); //-> 007
             Console.SetCursorPosition(x, y + 1);
-            EditColor(1);
+            EditColor(1); //-> 007
         }
 
         public static void ShowMenu() // Always show keyboard shortcuts at bottom
@@ -290,8 +290,8 @@ namespace SimpleScanning
             int x = Console.CursorLeft;
             int y = Console.CursorTop;
             Console.CursorTop = Console.WindowTop + Console.WindowHeight - 5;
-            CenterText(text1);
-            CenterText(text2);
+            CenterText(text1); //-> 010
+            CenterText(text2); //-> 010
             // Restore previous position
             Console.SetCursorPosition(x, y);
         }
