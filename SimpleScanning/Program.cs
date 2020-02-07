@@ -28,7 +28,7 @@ namespace SimpleScanning
             CenterText(welcome1); //-> 010
             CenterText(welcome2); //-> 010
             Console.CursorVisible = false;
-            Console.Read();
+            Console.ReadKey();
             Console.Clear(); // Clears text after keyboard press
         }
 
@@ -47,7 +47,7 @@ namespace SimpleScanning
             {
                 Console.Clear(); // Clear Console on loop
                 ShowMenu(); //-> 009
-                Console.SetCursorPosition(0, 4);
+                Console.SetCursorPosition(0, 2);
                 PrintList(taskItems, selectedIndex, pageNum); //-> 004
                 ConsoleKey keyPress = Console.ReadKey(true).Key;
 
@@ -78,6 +78,8 @@ namespace SimpleScanning
                     case ConsoleKey.DownArrow: 
                     // ID 003.001.001.005
                         turnPage = KeyEvent(taskItems, 5, selectedIndex, pageNum); //-> 005.005
+
+                        // ID 003.001.001.005.001
                         if (turnPage)
                         {
                             pageNum++;
@@ -110,7 +112,7 @@ namespace SimpleScanning
                 if (selectedIndex == 0) // If selectedIndex is [0] 
                 // ID 004.002.001
                 {
-                    SelectProcess(indexOutput, indexLength); // Chagnes color of selectedIndex
+                    SelectProcess(indexOutput, indexLength); // Chagnes color of selectedIndex              
 
                     if (taskItems.Count > 1) // Prints all list items regularly after [i]
                     // ID 004.002.001.001
@@ -119,7 +121,7 @@ namespace SimpleScanning
                         for (int i = selectedIndex; i <= maxNum; i++) 
                         // ID 004.002.001.001.001
                         {
-                            var (internalOutput, _) = ObjectToString(taskItems, selectedIndex);
+                            var (internalOutput, _) = ObjectToString(taskItems, i); //-> 011
                             CenterText(internalOutput); //-> 010
                         }
                     }
@@ -132,14 +134,16 @@ namespace SimpleScanning
                     for (int i = 0; i < selectedIndex + 1; i++) // Prints all list items regularly before [i]
                     // ID 004.002.002.001
                     {
-                        CenterText(taskItems[i].ToString()); //-> 010
+                        var (internalOutput, _) = ObjectToString(taskItems, i); //-> 011
+                        CenterText(internalOutput); //-> 010
                     }
                     SelectProcess(indexOutput, indexLength);  //-> 008
 
                     for (int i = selectedIndex + 1; i <= 20; i++) // Prints all list items regularly after [i] 
                     // ID 004.002.002.002
                     {
-                        CenterText(taskItems[i].ToString()); //-> 010
+                        var (internalOutput, _) = ObjectToString(taskItems, i); //-> 011
+                        CenterText(internalOutput); //-> 010
                     }
                 }
 
@@ -154,18 +158,19 @@ namespace SimpleScanning
             // ID 004.003
             {
                 var (indexOutput, indexLength) = ObjectToString(taskItems, selectedIndex); //-> 011
-
                 for (int i = 0; i < selectedIndex; i++) // Prints all list items regularly before [i]
                 // ID 004.003.001
                 {
-                    CenterText(taskItems[i].ToString()); //-> 010
+                    var (internalOutput, _) = ObjectToString(taskItems, i); //-> 011
+                    CenterText(internalOutput); //-> 010
                 }
                 SelectProcess(indexOutput, indexLength);  //-> 008
 
                 for (int i = selectedIndex + 1; i < taskItems.Count; i++) // Prints all list items regularly after [i]
                 // ID 004.003.002
                 {
-                    CenterText(taskItems[i].ToString()); //-> 010
+                    var (internalOutput, _) = ObjectToString(taskItems, i); //-> 011
+                    CenterText(internalOutput); //-> 010
                 }
             }
         }
@@ -176,12 +181,12 @@ namespace SimpleScanning
             bool turnPage = false;
             int pageCondition = selectedIndex % 20;
             int maxNum = pageNum * 20 - 1;
-            int i = maxNum - 20;
+            // int i = maxNum - 20;
 
             if (ID == 1) // Add
             // ID 005.001
             {
-                Console.Write("Enter new task: ");
+                Console.WriteLine("Enter new task: ");
                 Console.CursorVisible = true;
                 var input = Console.ReadLine();
                 taskItems.Add(input);
@@ -254,14 +259,14 @@ namespace SimpleScanning
                 Console.ForegroundColor = ConsoleColor.White;
             }
 
-            else // Cleans Up Selected Color; pass indexLength as ID
+            else // Pass indexLength to avoid top statements and enter here
             // ID 007.003
             {
                 int y = Console.CursorTop;
-                Console.SetCursorPosition(0, y);
                 string spaces = "  ";
-                Console.BackgroundColor = ConsoleColor.Gray;
                 Console.WriteLine(String.Format("{0," + (((Console.WindowWidth - ID) / 2) + (spaces.Length / 3)) + "}", spaces));
+                Console.SetCursorPosition(0, y);
+                EditColor(1); //-> 007.001
             }
         }
 
@@ -270,8 +275,8 @@ namespace SimpleScanning
         {
             int x = Console.CursorLeft;
             int y = Console.CursorTop;
-            EditColor(2); //-> 007
-            CenterText(indexOutput += " "); //-> 010
+            EditColor(2); //-> 007.003
+            CenterText(indexOutput + " "); //-> 010
             EditColor(indexLength); //-> 007
             Console.SetCursorPosition(x, y + 1);
             EditColor(1); //-> 007
@@ -307,49 +312,56 @@ namespace SimpleScanning
         // ID 011
         {
             string indexOutput = taskItems[desiredIndex].ToString();
-            int indexLength = indexOutput.Length + 4;
+            int indexLength = indexOutput.Length;
             return (indexOutput, indexLength);
         }
+
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //                                                                Version 1.1 Bug List
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //  Bug 001 : Id 002 : On Run (System.Collections.ArrayList & System.ArgumentOutOfRangeException) Line 319, 129, 51, 20
+        //      Resolved : Changed Console.Read() to Console.ReadKey(), which fixed ID 005.001
+        //  Bug 002 : ID 008 : Highlight colors entire line
+        //      Unresolved
+        //  Bug 003 : ID 005.001 : When called the second time, writes the task then multiplies it and prints it until System.ArgumentOutOfRangeException
+        //      Unresolved
+        //
+        //
+        //
 
         //--------------------------------------------------------------------------------------------------------
         //                                       Version 1 Snippets Removed
         //--------------------------------------------------------------------------------------------------------
 
-        //public static void SelectColor(string text, int size, int ID) // For Selected Text
-        //{
-
-        //}
-
-
         //--------------------------------------------------------------------------------------------------------
         //                                   UnNeeded
         //--------------------------------------------------------------------------------------------------------
 
-        //public static void Selected(ArrayList taskList, int selected)
-        //{
+        // public static void Selected(ArrayList taskList, int selected)
+        // {
         //    string text = taskList[selected].ToString();
-        //     int length = text.Length + 4;
-        //     Console.CursorVisible = true;
+        //    int length = text.Length + 4;
+        //    Console.CursorVisible = true;
         // }
 
 
         // public static int HighlightLength(LinkedList<string> taskList)
         // {
 
-        //    var temp = taskList.ElementAt(n);
+        // var temp = taskList.ElementAt(n);
         // }
         // Move Cursor
-        //Index -> color
-        //    select = 0
-        //     down key if 0 then add 1, if 20, change page 1 to page 2, move to 21, repeat, if end move to 0
+        // Index -> color
+        // select = 0
+        // down key if 0 then add 1, if 20, change page 1 to page 2, move to 21, repeat, if end move to 0
 
 
 
         // Count += 1;
         // Count %= list.Count;
 
-        //for (int i = firstOfPage(currentPage);
-        //  (i C Is.Count)&&(i<FirstOfPage(currentPage + 1));
-        //  ++i
+        // for (int i = firstOfPage(currentPage);
+        // (i C Is.Count)&&(i<FirstOfPage(currentPage + 1));
+        // ++i
     }
 }
