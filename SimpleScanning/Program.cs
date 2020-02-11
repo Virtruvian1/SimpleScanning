@@ -77,8 +77,9 @@ namespace SimpleScanning
 
                     case ConsoleKey.DownArrow: 
                     // ID 003.001.001.005
-                        turnPage = KeyEvent(taskItems, 5, selectedIndex, pageNum); //-> 005.005
-
+                        (turnPage, _) = KeyEvent(taskItems, 5, selectedIndex, pageNum); //-> 005.005
+                        (_, selectedIndex) = KeyEvent(taskItems, 5, selectedIndex, pageNum); //-> 005.005
+                        selectedIndex++;
                         // ID 003.001.001.005.001
                         if (turnPage)
                         {
@@ -118,7 +119,7 @@ namespace SimpleScanning
                     // ID 004.002.001.001
                     {
 
-                        for (int i = selectedIndex; i <= maxNum; i++) 
+                        for (int i = selectedIndex; i < taskItems.Count; i++) 
                         // ID 004.002.001.001.001
                         {
                             var (internalOutput, _) = ObjectToString(taskItems, i); //-> 011
@@ -175,7 +176,7 @@ namespace SimpleScanning
             }
         }
 
-        public static bool KeyEvent(ArrayList taskItems, int ID, int selectedIndex, int pageNum) 
+        public static (bool, int) KeyEvent(ArrayList taskItems, int ID, int selectedIndex, int pageNum) 
         // ID 005
         {
             bool turnPage = false;
@@ -217,19 +218,18 @@ namespace SimpleScanning
                 if (selectedIndex >= 0 || selectedIndex <= 19)
                 // ID 005.005.001
                 {
-                    selectedIndex++;
+                    return (turnPage, selectedIndex++);
                 }
 
                 else if (pageCondition == 0) // If pageNum %20, print new page
                 // ID 005.005.002
                 {
-                    selectedIndex++;
                     turnPage = true;
-                    return turnPage;
+                    return (turnPage, selectedIndex++);
                 }
-                return turnPage;
+                return (turnPage, selectedIndex++);
             }
-            return turnPage;
+            return (turnPage, selectedIndex++);
         }
 
         public static void DefaultConsole() // Changes Console Default 
@@ -278,8 +278,8 @@ namespace SimpleScanning
             EditColor(2); //-> 007.003
             CenterText(indexOutput + " "); //-> 010
             EditColor(indexLength); //-> 007
-            Console.SetCursorPosition(x, y + 1);
             EditColor(1); //-> 007
+            Console.SetCursorPosition(x, y + 1);
         }
 
         public static void ShowMenu() // Always show keyboard shortcuts at bottom
@@ -320,11 +320,11 @@ namespace SimpleScanning
         //                                                                Version 1.1 Bug List
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  Bug 001 : Id 002 : On Run (System.Collections.ArrayList & System.ArgumentOutOfRangeException) Line 319, 129, 51, 20
-        //      Resolved : Changed Console.Read() to Console.ReadKey(), which fixed ID 005.001
+        //      Resolved : Id 002 : Changed Console.Read() to Console.ReadKey(), which fixed ID 005.001
         //  Bug 002 : ID 008 : Highlight colors entire line
-        //      Unresolved
+        //      Unresolved 
         //  Bug 003 : ID 005.001 : When called the second time, writes the task then multiplies it and prints it until System.ArgumentOutOfRangeException
-        //      Unresolved
+        //      Resolved : // ID 004.002.001.001.001 : Fixed the looping max from 19 to taskItems.Count limiting the loop to the size of the list
         //
         //
         //
